@@ -21,5 +21,5 @@ class Measurement(Base):
     )
 
     __table_args__ = (
-        Index("idx_timestamp_device", "device.id", "timestamp")
+        Index("idx_timestamp_device", "device_id", "timestamp"),
     )

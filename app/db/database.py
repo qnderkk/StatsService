@@ -5,7 +5,7 @@ from app.core.config import settings
 
 
 engine = create_async_engine(
-    bind=settings.database_url,
+    url=settings.database_url,
     echo=True
 )
 
