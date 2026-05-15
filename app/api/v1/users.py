@@ -9,9 +9,8 @@ from app.crud import crud_user
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.post("/register")
-async def register_user(
-    user: UserCreate,
-    db: AsyncSession = Depends(get_db)
-):
-    return await crud_user.create_user(db=db, user=user)
+@router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+async def register_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
+    result = await crud_user.create_user(db=db, user=user)
+
+    return result
