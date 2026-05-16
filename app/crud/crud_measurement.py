@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
@@ -34,3 +35,19 @@ async def create_measerement(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"The device with this ID {device_id} was not found."
         )
+    
+
+async def fetch_aggregate_stats(session: AsyncSession, device_ids: list, columns: list):
+    query = select(*columns).where(Measurement.device_id.in_(device_ids))
+    result = await session.execute(query)
+    return result.first()
+
+
+async def fetch_per_device_stats(session: AsyncSession, device_ids: list, columns: list) -> list:
+    query = (
+        select(Measurement.device_id, *columns)
+        .where(Measurement.device_id.in_(device_ids))
+        .group_by(Measurement.device_id)
+    )
+    result = await session.execute(query)
+    return list(result.all())

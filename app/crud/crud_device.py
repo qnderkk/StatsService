@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
@@ -26,3 +27,9 @@ async def create_device(db: AsyncSession, device: DeviceCreate):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Error with device registratin: {e}"
         )
+
+
+async def get_user_device_ids(session: AsyncSession, user_id: str) -> list:
+    query = select(Device.id).where(Device.user_id == user_id)
+    result = await session.execute(query)
+    return list(result.scalars().all())
